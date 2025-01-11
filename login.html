@@ -5,65 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login and Register Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-        .container.active {
-            display: block;
-        }
-        .container h2 {
-            margin-top: 0;
-        }
-        .container input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .container button {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .container button:hover {
-            background-color: #0056b3;
-        }
-        .toggle-button {
-            margin: 10px 0;
-            text-align: center;
-        }
-        .toggle-button button {
-            background-color: transparent;
-            color: #007bff;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .toggle-button button:hover {
-            text-decoration: underline;
-        }
-        .error-message {
-            color: red;
-            display: none;
-        }
+        body {font-family: Arial, sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;}
+        .container {background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); display: none;}
+        .container.active {display: block;}
+        .container h2 {margin-top: 0;}
+        .container input {width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;}
+        .container button {width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;}
+        .container button:hover {background-color: #0056b3;}
+        .toggle-button {margin: 10px 0; text-align: center;}
+        .toggle-button button {background-color: transparent; color: #007bff; border: none; cursor: pointer; font-size: 16px;}
+        .toggle-button button:hover {text-decoration: underline;}
+        .error-message {color: red; display: none;}
     </style>
 </head>
 <body>
@@ -87,7 +39,6 @@
             <button onclick="showLogin()">or Login</button>
         </div>
     </div>
-
     <script>
         let users = [
             { id: "user1", password: "pass1" },
@@ -141,4 +92,4 @@
         showLogin();
     </script>
 </body>
-              </html>
+</html>
