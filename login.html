@@ -3,93 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login and Register Page</title>
+    <title>IP Login System</title>
     <style>
         body {font-family: Arial, sans-serif; background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;}
-        .container {background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); display: none;}
-        .container.active {display: block;}
+        .container {background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}
         .container h2 {margin-top: 0;}
-        .container input {width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px;}
         .container button {width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;}
         .container button:hover {background-color: #0056b3;}
-        .toggle-button {margin: 10px 0; text-align: center;}
-        .toggle-button button {background-color: transparent; color: #007bff; border: none; cursor: pointer; font-size: 16px;}
-        .toggle-button button:hover {text-decoration: underline;}
         .error-message {color: red; display: none;}
     </style>
 </head>
 <body>
-    <div class="container" id="loginContainer">
-        <h2>Login</h2>
-        <input type="text" id="loginId" placeholder="User ID">
-        <input type="password" id="loginPass" placeholder="Password">
+    <div class="container">
+        <h2>IP Login System</h2>
         <button onclick="login()">Login</button>
-        <p class="error-message" id="loginErrorMessage">Invalid ID or Password</p>
-        <div class="toggle-button">
-            <button onclick="showRegister()">or Register</button>
-        </div>
+        <p class="error-message" id="errorMessage">Access Denied: Invalid IP Address</p>
     </div>
-    <div class="container" id="registerContainer">
-        <h2>Register</h2>
-        <input type="text" id="registerId" placeholder="User ID">
-        <input type="password" id="registerPass" placeholder="Password">
-        <button onclick="register()">Register</button>
-        <p class="error-message" id="registerErrorMessage">User ID already exists</p>
-        <div class="toggle-button">
-            <button onclick="showLogin()">or Login</button>
-        </div>
-    </div>
+
     <script>
-        let users = [
-            { id: "user1", password: "pass1" },
-            { id: "user2", password: "pass2" }
-        ];
+        const profiles = {};
 
-        function showLogin() {
-            document.getElementById("loginContainer").classList.add("active");
-            document.getElementById("registerContainer").classList.remove("active");
+        function getIPAddress() {
+            return fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => data.ip);
         }
 
-        function showRegister() {
-            document.getElementById("loginContainer").classList.remove("active");
-            document.getElementById("registerContainer").classList.add("active");
-        }
+        async function login() {
+            const userIP = await getIPAddress();
+            const errorMessage = document.getElementById("errorMessage");
 
-        function register() {
-            const registerId = document.getElementById("registerId").value;
-            const registerPass = document.getElementById("registerPass").value;
-            const registerErrorMessage = document.getElementById("registerErrorMessage");
-
-            const userExists = users.some(user => user.id === registerId);
-
-            if (userExists) {
-                registerErrorMessage.style.display = "block";
-            } else {
-                users.push({ id: registerId, password: registerPass });
-                alert("Registration successful!");
-                registerErrorMessage.style.display = "none";
-                showLogin();
-            }
-        }
-
-        function login() {
-            const loginId = document.getElementById("loginId").value;
-            const loginPass = document.getElementById("loginPass").value;
-            const loginErrorMessage = document.getElementById("loginErrorMessage");
-
-            const user = users.find(user => user.id === loginId && user.password === loginPass);
-
-            if (user) {
-                alert("Login successful!");
-                loginErrorMessage.style.display = "none";
+            if (profiles[userIP]) {
+                alert(`Login successful! Welcome back, ${profiles[userIP].name}`);
+                errorMessage.style.display = "none";
                 // Redirect to another page or perform other actions
             } else {
-                loginErrorMessage.style.display = "block";
+                const userName = prompt("Enter your name to create a new profile:");
+                if (userName) {
+                    profiles[userIP] = { name: userName };
+                    alert(`Profile created! Welcome, ${userName}`);
+                    errorMessage.style.display = "none";
+                } else {
+                    errorMessage.style.display = "block";
+                }
             }
         }
-
-        // Show the login form by default
-        showLogin();
     </script>
 </body>
 </html>
