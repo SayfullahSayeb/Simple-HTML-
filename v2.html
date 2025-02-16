@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .left-panel {
+            width: 400px;
+            background: #232323;
+            padding: 2rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+        }
+
+        .right-panel {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group h3 {
+            margin-bottom: 1rem;
+            color: #3498db;
+            font-size: 1.1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-btn {
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-btn:hover {
+            background: #2980b9;
+        }
+
+        select,
+        input[type="number"],
+        input[type="color"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .button {
+            background: #2ecc71;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            font-weight: 500;
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .button:hover {
+            background: #27ae60;
+        }
+
+        .button.secondary {
+            background: #e74c3c;
+        }
+
+        .button.secondary:hover {
+            background: #c0392b;
+        }
+
+        .button.tertiary {
+            background: #9b59b6;
+        }
+
+        .button.tertiary:hover {
+            background: #8e44ad;
+        }
+
+        #svg-container {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+        }
+
+        svg {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .status-message {
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+    </style>
+    <title>SVG Animation Studio</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="controls">
+                <div class="control-group">
+                    <h3>Upload SVG</h3>
+                    <input type="file" id="svg-upload" accept=".svg">
+                    <label for="svg-upload" class="file-upload-btn">Choose SVG File</label>
+                </div>
+
+                <div class="control-group">
+                    <h3>Animation Settings</h3>
+                    <label for="transition-time">Animation Duration</label>
+                    <select id="transition-time">
+                        <option value="1">1 second</option>
+                        <option value="2">2 seconds</option>
+                        <option value="3">3 seconds</option>
+                        <option value="5" selected>5 seconds</option>
+                        <option value="7">7 seconds</option>
+                        <option value="10">10 seconds</option>
+                    </select>
+
+                    <label for="animation-type">Animation Type</label>
+                    <select id="animation-type">
+                        <option value="ease-in-out">Ease In Out</option>
+                        <option value="linear">Linear</option>
+                        <option value="ease-in">Ease In</option>
+                        <option value="ease-out">Ease Out</option>
+                        <option value="bounce">Bounce</option>
+                    </select>
+
+                    <label for="stroke-width">Stroke Width</label>
+                    <input type="number" id="stroke-width" value="2" min="1" max="20">
+
+                    <label for="stroke-color">Stroke Color</label>
+                    <input type="color" id="stroke-color" value="#3498db">
+                </div>
+
+                <div class="control-group">
+                    <h3>Export Options</h3>
+                    <button class="button" onclick="downloadSVG()">Download SVG</button>
+                    <button class="button tertiary" onclick="replayAnimation()">Replay Animation</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div id="svg-container">
+                <div class="status-message">Upload an SVG file to preview animation</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const svgUpload = document.getElementById("svg-upload");
+        const transitionTimeSelect = document.getElementById("transition-time");
+        const animationTypeSelect = document.getElementById("animation-type");
+        const strokeWidthInput = document.getElementById("stroke-width");
+        const strokeColorInput = document.getElementById("stroke-color");
+        const svgContainer = document.getElementById("svg-container");
+        let currentSvgContent = null;
+
+        function updateFileName() {
+            const fileUploadBtn = document.querySelector('.file-upload-btn');
+            const fileName = svgUpload.files[0]?.name || 'Choose SVG File';
+            fileUploadBtn.textContent = fileName;
+        }
+
+        svgUpload.addEventListener("change", handleFileUpload);
+        transitionTimeSelect.addEventListener("change", updateAnimation);
+        animationTypeSelect.addEventListener("change", updateAnimation);
+        strokeWidthInput.addEventListener("change", updateAnimation);
+        strokeColorInput.addEventListener("change", updateAnimation);
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            updateFileName();
+
+            if (file && file.type === "image/svg+xml") {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    currentSvgContent = reader.result;
+                    updateAnimation();
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a valid SVG file.");
+            }
+        }
+
+        function updateAnimation() {
+            if (!currentSvgContent) return;
+
+            const duration = parseFloat(transitionTimeSelect.value);
+            const animationType = animationTypeSelect.value;
+            const strokeWidth = strokeWidthInput.value;
+            const strokeColor = strokeColorInput.value;
+
+            svgContainer.innerHTML = currentSvgContent;
+            const svg = svgContainer.querySelector('svg');
+
+            if (!svg) return;
+
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+            const paths = svg.querySelectorAll('path');
+            paths.forEach(path => {
+                const length = path.getTotalLength();
+
+                path.style.stroke = strokeColor;
+                path.style.strokeWidth = strokeWidth;
+                path.style.strokeDasharray = length;
+                path.style.strokeDashoffset = length;
+
+                path.getBoundingClientRect();
+
+                path.style.transition = `none`;
+                path.style.strokeDashoffset = length;
+
+                path.getBoundingClientRect();
+
+                path.style.transition = `stroke-dashoffset ${duration}s ${animationType}`;
+                path.style.strokeDashoffset = '0';
+            });
+        }
+
+        function replayAnimation() {
+            if (currentSvgContent) {
+                updateAnimation();
+            }
+        }
+
+        function downloadSVG() {
+            if (!currentSvgContent) return;
+
+            const blob = new Blob([currentSvgContent], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'animated-svg.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        updateFileName();
+    </script>
+</body>
+
+</html>
