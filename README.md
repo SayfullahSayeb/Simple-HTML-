@@ -12,7 +12,7 @@
 
 If you don't have an SVG file yet, you can easily create one using [picsvg.com](https://picsvg.com/), a user-friendly tool that converts images to SVG format.
 
-# Demo
+## Demo
 https://mdsayeb7.github.io/animsvg/demo.html
 
 ## License
