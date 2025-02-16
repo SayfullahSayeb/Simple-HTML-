@@ -5,74 +5,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: #000;
+            background: #1a1a1a;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 2rem;
         }
 
         svg {
-            max-width: 90%;
-            max-height: 90%;
-            margin-top: 20px;
-        }
-
-        input[type="file"], select {
-            margin: 10px;
+            max-width: 100%;
+            height: auto;
+            margin-top: 2rem;
         }
 
         .controls {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-btn {
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
             text-align: center;
+            font-weight: 500;
+        }
+
+        .file-upload-btn:hover {
+            background: #2980b9;
+        }
+
+        select {
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        select:focus {
+            border-color: #3498db;
+        }
+
+        #svg-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 2rem;
         }
 
         svg path {
-            stroke: white;
-            stroke-width: 10px;
+            stroke: #3498db;
+            stroke-width: 2px;
             fill: none;
+        }
+
+        .status-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .controls {
+                padding: 1.5rem;
+            }
         }
     </style>
     <title>SVG Path Animation</title>
 </head>
 
 <body>
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label for="svg-upload">Upload SVG File</label>
+                <input type="file" id="svg-upload" accept=".svg">
+                <label for="svg-upload" class="file-upload-btn">Choose File</label>
+            </div>
 
-    <div class="controls">
-        <label for="svg-upload">Upload SVG:</label>
-        <input type="file" id="svg-upload" accept=".svg">
+            <div class="control-group">
+                <label for="transition-time">Animation Duration</label>
+                <select id="transition-time">
+                    <option value="1">1 second</option>
+                    <option value="2">2 seconds</option>
+                    <option value="3">3 seconds</option>
+                    <option value="5" selected>5 seconds</option>
+                    <option value="7">7 seconds</option>
+                    <option value="10">10 seconds</option>
+                </select>
+            </div>
+        </div>
 
-        <label for="transition-time">Select Transition Time:</label>
-        <select id="transition-time">
-            <option value="3">3 seconds</option>
-            <option value="5" selected>5 seconds</option>
-            <option value="7">7 seconds</option>
-            <option value="10">10 seconds</option>
-        </select>
+        <div id="svg-container">
+            <div class="status-message">Upload an SVG file to begin</div>
+        </div>
     </div>
-
-    <div id="svg-container"></div>
 
     <script>
         const svgUpload = document.getElementById("svg-upload");
         const transitionTimeSelect = document.getElementById("transition-time");
         const svgContainer = document.getElementById("svg-container");
+        let currentSvgContent = null;
 
-        let svgElement = null;
+        function updateFileName() {
+            const fileUploadBtn = document.querySelector('.file-upload-btn');
+            const fileName = svgUpload.files[0]?.name || 'Choose File';
+            fileUploadBtn.textContent = fileName;
+        }
 
-        // Handle SVG file upload
-        svgUpload.addEventListener("change", function (e) {
+        svgUpload.addEventListener("change", function(e) {
             const file = e.target.files[0];
+            updateFileName();
+
             if (file && file.type === "image/svg+xml") {
                 const reader = new FileReader();
-                reader.onload = function () {
-                    svgContainer.innerHTML = reader.result;  // Load SVG to the container
-                    svgElement = svgContainer.querySelector("svg");
-                    // Apply animation immediately after SVG is loaded
-                    applyAnimation(parseFloat(transitionTimeSelect.value));
+                reader.onload = function() {
+                    currentSvgContent = reader.result;
+                    animateSVG(currentSvgContent, parseFloat(transitionTimeSelect.value));
                 };
                 reader.readAsText(file);
             } else {
@@ -80,46 +191,49 @@
             }
         });
 
-        // Apply animation to SVG paths
-        function applyAnimation(transitionTime) {
-            if (!svgElement) return;
+        function animateSVG(svgContent, duration) {
+            svgContainer.innerHTML = svgContent;
+            const svg = svgContainer.querySelector('svg');
+            
+            if (!svg) return;
 
-            // Remove and reinsert the SVG to reset it
-            svgContainer.innerHTML = '';  // Clear current SVG
-            svgContainer.appendChild(svgElement);  // Re-insert SVG
+            // Ensure SVG is visible and responsive
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-            // Reapply animation to the paths of the new SVG
-            const allPaths = svgElement.querySelectorAll("path");
-            allPaths.forEach((path) => {
-                // Reset stroke properties before applying the new animation
+            const paths = svg.querySelectorAll('path');
+            paths.forEach(path => {
+                // Reset the path
                 const length = path.getTotalLength();
                 path.style.strokeDasharray = length;
                 path.style.strokeDashoffset = length;
-
-                // Force reflow (repaint) to reset the animation
-                path.getBoundingClientRect(); // Trigger reflow
-
-                // Apply the new transition time
-                path.style.transition = `stroke-dashoffset ${transitionTime}s ease-in-out`;
-
-                // Restart the animation by setting strokeDashoffset to 0 after a small delay
-                setTimeout(() => {
-                    path.style.strokeDashoffset = "0";
-                }, 10); // Small timeout to ensure transition is triggered
+                
+                // Force reflow
+                path.getBoundingClientRect();
+                
+                // Apply new transition
+                path.style.transition = `none`;
+                path.style.strokeDashoffset = length;
+                
+                // Force reflow again
+                path.getBoundingClientRect();
+                
+                // Start animation
+                path.style.transition = `stroke-dashoffset ${duration}s ease-in-out`;
+                path.style.strokeDashoffset = '0';
             });
         }
 
-        // Apply animation instantly when the transition time is changed
-        transitionTimeSelect.addEventListener("change", function () {
-            const transitionTime = parseFloat(transitionTimeSelect.value);
-            // Only apply animation if SVG is loaded
-            if (svgElement) {
-                // Reapply animation with the new transition time
-                applyAnimation(transitionTime);
+        transitionTimeSelect.addEventListener("change", function() {
+            if (currentSvgContent) {
+                animateSVG(currentSvgContent, parseFloat(this.value));
             }
         });
-    </script>
 
+        // Update file input button text
+        updateFileName();
+    </script>
 </body>
 
 </html>
