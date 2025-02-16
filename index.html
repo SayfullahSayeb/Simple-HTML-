@@ -185,6 +185,17 @@
                     <option value="10">10 seconds</option>
                 </select>
             </div>
+
+            <div class="control-group">
+                <label for="stroke-width">Stroke Width</label>
+                <select id="stroke-width">
+                    <option value="5">5px</option>
+                    <option value="10" selected>10px</option>
+                    <option value="15">15px</option>
+                    <option value="20">20px</option>
+                    <option value="25">25px</option>
+                </select>
+            </div>
         </div>
 
         <div id="svg-container">
@@ -195,6 +206,7 @@
     <script>
         const svgUpload = document.getElementById("svg-upload");
         const transitionTimeSelect = document.getElementById("transition-time");
+        const strokeWidthSelect = document.getElementById("stroke-width");
         const svgContainer = document.getElementById("svg-container");
         let currentSvgContent = null;
 
@@ -212,7 +224,7 @@
                 const reader = new FileReader();
                 reader.onload = function () {
                     currentSvgContent = reader.result;
-                    animateSVG(currentSvgContent, parseFloat(transitionTimeSelect.value));
+                    animateSVG(currentSvgContent, parseFloat(transitionTimeSelect.value), parseFloat(strokeWidthSelect.value));
                 };
                 reader.readAsText(file);
             } else {
@@ -220,7 +232,7 @@
             }
         });
 
-        function animateSVG(svgContent, duration) {
+        function animateSVG(svgContent, duration, strokeWidth) {
             svgContainer.innerHTML = svgContent;
             const svg = svgContainer.querySelector('svg');
 
@@ -235,6 +247,7 @@
                 const length = path.getTotalLength();
                 path.style.strokeDasharray = length;
                 path.style.strokeDashoffset = length;
+                path.style.strokeWidth = strokeWidth + 'px';
 
                 path.getBoundingClientRect();
 
@@ -250,7 +263,13 @@
 
         transitionTimeSelect.addEventListener("change", function () {
             if (currentSvgContent) {
-                animateSVG(currentSvgContent, parseFloat(this.value));
+                animateSVG(currentSvgContent, parseFloat(this.value), parseFloat(strokeWidthSelect.value));
+            }
+        });
+
+        strokeWidthSelect.addEventListener("change", function () {
+            if (currentSvgContent) {
+                animateSVG(currentSvgContent, parseFloat(transitionTimeSelect.value), parseFloat(this.value));
             }
         });
 
