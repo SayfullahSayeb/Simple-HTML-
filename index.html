@@ -69,7 +69,8 @@
             display: none;
         }
 
-        .file-upload-btn {
+        .file-upload-btn,
+        .replay-btn {
             background: #3498db;
             color: white;
             padding: 0.8rem 1.5rem;
@@ -78,9 +79,12 @@
             transition: background 0.3s ease;
             text-align: center;
             font-weight: 500;
+            border: none;
+            width: 100%;
         }
 
-        .file-upload-btn:hover {
+        .file-upload-btn:hover,
+        .replay-btn:hover {
             background: #2980b9;
         }
 
@@ -147,7 +151,7 @@
                 width: 100%;
                 padding: 1.5rem;
                 max-width: 100%;
-                height: 250px;
+                height: auto;
             }
 
             #svg-container {
@@ -157,7 +161,8 @@
                 padding: 1rem;
             }
 
-            .file-upload-btn {
+            .file-upload-btn,
+            .replay-btn {
                 padding: 0.8rem 1rem;
                 font-size: 0.9rem;
             }
@@ -196,6 +201,8 @@
                     <option value="25">25px</option>
                 </select>
             </div>
+
+            <button class="replay-btn">Replay Animation</button>
         </div>
 
         <div id="svg-container">
@@ -207,6 +214,7 @@
         const svgUpload = document.getElementById("svg-upload");
         const transitionTimeSelect = document.getElementById("transition-time");
         const strokeWidthSelect = document.getElementById("stroke-width");
+        const replayButton = document.querySelector(".replay-btn");
         const svgContainer = document.getElementById("svg-container");
         let currentSvgContent = null;
 
@@ -224,7 +232,7 @@
                 const reader = new FileReader();
                 reader.onload = function () {
                     currentSvgContent = reader.result;
-                    animateSVG(currentSvgContent, parseFloat(transitionTimeSelect.value), parseFloat(strokeWidthSelect.value));
+                    animateSVG();
                 };
                 reader.readAsText(file);
             } else {
@@ -232,8 +240,12 @@
             }
         });
 
-        function animateSVG(svgContent, duration, strokeWidth) {
-            svgContainer.innerHTML = svgContent;
+        function animateSVG() {
+            if (!currentSvgContent) return;
+            const duration = parseFloat(transitionTimeSelect.value);
+            const strokeWidth = parseFloat(strokeWidthSelect.value);
+
+            svgContainer.innerHTML = currentSvgContent;
             const svg = svgContainer.querySelector('svg');
 
             if (!svg) return;
@@ -251,27 +263,14 @@
 
                 path.getBoundingClientRect();
 
-                path.style.transition = `none`;
-                path.style.strokeDashoffset = length;
-
-                path.getBoundingClientRect();
-
                 path.style.transition = `stroke-dashoffset ${duration}s ease-in-out`;
                 path.style.strokeDashoffset = '0';
             });
         }
 
-        transitionTimeSelect.addEventListener("change", function () {
-            if (currentSvgContent) {
-                animateSVG(currentSvgContent, parseFloat(this.value), parseFloat(strokeWidthSelect.value));
-            }
-        });
-
-        strokeWidthSelect.addEventListener("change", function () {
-            if (currentSvgContent) {
-                animateSVG(currentSvgContent, parseFloat(transitionTimeSelect.value), parseFloat(this.value));
-            }
-        });
+        transitionTimeSelect.addEventListener("change", animateSVG);
+        strokeWidthSelect.addEventListener("change", animateSVG);
+        replayButton.addEventListener("click", animateSVG);
 
         updateFileName();
     </script>
