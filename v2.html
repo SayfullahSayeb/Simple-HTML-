@@ -96,39 +96,38 @@
         }
 
         select,
-input[type="number"],
-input[type="color"] {
-    width: 100%;
-    padding: 0.8rem;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    color: white;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
+        input[type="number"],
+        input[type="color"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
 
-/* When the dropdown is open, change the background color */
-select:focus,
-input[type="number"]:focus,
-input[type="color"]:focus {
-    background: #232323; /* Dark background when focused/open */
-    color: white; /* Ensure text is still visible */
-}
+        select:focus,
+        input[type="number"]:focus,
+        input[type="color"]:focus {
+            background: #232323;
+            color: white;
+        }
 
-input[type="color"] {
-    width: 50px;   /* Set width to 30px */
-    height: 50px;  /* Set height to 30px */
-    padding: 0;    /* Remove any padding */
-}
+        input[type="color"] {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+        }
 
-.colorpick-eyedropper-input-trigger {
-    display: none;
-}
+        .colorpick-eyedropper-input-trigger {
+            display: none;
+        }
 
 
         .button {
-            background: #2ecc71;
+            background: #000000;
             color: white;
             padding: 0.8rem 1.5rem;
             border: none;
@@ -138,26 +137,6 @@ input[type="color"] {
             font-weight: 500;
             width: 100%;
             margin-bottom: 0.5rem;
-        }
-
-        .button:hover {
-            background: #27ae60;
-        }
-
-        .button.secondary {
-            background: #e74c3c;
-        }
-
-        .button.secondary:hover {
-            background: #c0392b;
-        }
-
-        .button.tertiary {
-            background: #9b59b6;
-        }
-
-        .button.tertiary:hover {
-            background: #8e44ad;
         }
 
         #svg-container {
@@ -211,32 +190,27 @@ input[type="color"] {
                     <label for="transition-time">Animation Duration</label>
                     <select id="transition-time">
                         <option value="1">1 second</option>
-                        <option value="2">2 seconds</option>
                         <option value="3">3 seconds</option>
                         <option value="5" selected>5 seconds</option>
                         <option value="7">7 seconds</option>
                         <option value="10">10 seconds</option>
                     </select>
 
-                    <label for="animation-type">Animation Type</label>
-                    <select id="animation-type">
-                        <option value="ease-in-out">Ease In Out</option>
-                        <option value="linear">Linear</option>
-                        <option value="ease-in">Ease In</option>
-                        <option value="ease-out">Ease Out</option>
-                        <option value="bounce">Bounce</option>
-                    </select>
-
                     <label for="stroke-width">Stroke Width</label>
-                    <input type="number" id="stroke-width" value="5" min="1" max="20">
+                    <select id="stroke-width">
+                        <option value="5" selected>5px</option>
+                        <option value="10">10px</option>
+                        <option value="15">15px</option>
+                        <option value="20">20px</option>
+                        <option value="25">25px</option>
+                    </select>
 
                     <label for="stroke-color">Stroke Color</label>
                     <input type="color" id="stroke-color" value="#3498db">
-                </div>
 
-                <div class="control-group">
                     <button class="button tertiary" onclick="replayAnimation()">Replay Animation</button>
                 </div>
+
             </div>
         </div>
 
@@ -250,10 +224,10 @@ input[type="color"] {
     <script>
         const svgUpload = document.getElementById("svg-upload");
         const transitionTimeSelect = document.getElementById("transition-time");
-        const animationTypeSelect = document.getElementById("animation-type");
-        const strokeWidthInput = document.getElementById("stroke-width");
+        const strokeWidthSelect = document.getElementById("stroke-width");
         const strokeColorInput = document.getElementById("stroke-color");
         const svgContainer = document.getElementById("svg-container");
+
         let currentSvgContent = null;
 
         function updateFileName() {
@@ -262,10 +236,10 @@ input[type="color"] {
             fileUploadBtn.textContent = fileName;
         }
 
+        // Event Listeners for Auto-Update on Change
         svgUpload.addEventListener("change", handleFileUpload);
         transitionTimeSelect.addEventListener("change", updateAnimation);
-        animationTypeSelect.addEventListener("change", updateAnimation);
-        strokeWidthInput.addEventListener("change", updateAnimation);
+        strokeWidthSelect.addEventListener("change", updateAnimation);
         strokeColorInput.addEventListener("change", updateAnimation);
 
         function handleFileUpload(e) {
@@ -288,8 +262,7 @@ input[type="color"] {
             if (!currentSvgContent) return;
 
             const duration = parseFloat(transitionTimeSelect.value);
-            const animationType = animationTypeSelect.value;
-            const strokeWidth = strokeWidthInput.value;
+            const strokeWidth = strokeWidthSelect.value;
             const strokeColor = strokeColorInput.value;
 
             svgContainer.innerHTML = currentSvgContent;
@@ -304,20 +277,12 @@ input[type="color"] {
             const paths = svg.querySelectorAll('path');
             paths.forEach(path => {
                 const length = path.getTotalLength();
-
                 path.style.stroke = strokeColor;
-                path.style.strokeWidth = strokeWidth;
+                path.style.strokeWidth = strokeWidth + "px";
                 path.style.strokeDasharray = length;
                 path.style.strokeDashoffset = length;
-
                 path.getBoundingClientRect();
-
-                path.style.transition = `none`;
-                path.style.strokeDashoffset = length;
-
-                path.getBoundingClientRect();
-
-                path.style.transition = `stroke-dashoffset ${duration}s ${animationType}`;
+                path.style.transition = `stroke-dashoffset ${duration}s ease-in-out`;
                 path.style.strokeDashoffset = '0';
             });
         }
@@ -328,7 +293,6 @@ input[type="color"] {
             }
         }
 
-        // Initialize
         updateFileName();
     </script>
 </body>
