@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>animsvg</title>
     <style>
         * {
             margin: 0;
@@ -13,72 +14,63 @@
 
         body {
             background: #1a1a1a;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
+            flex-direction: row;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            gap: 2rem;
+            overflow: hidden;
         }
 
         .container {
             display: flex;
-            min-height: 100vh;
             width: 100%;
-        }
-
-        .left-panel {
-            width: 400px;
-            background: #232323;
             padding: 2rem;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .right-panel {
-            flex: 1;
-            padding: 2rem;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            background: #1a1a1a;
+            align-items: flex-start;
+            gap: 2rem;
+            max-width: 100%;
             height: 100vh;
             overflow: hidden;
         }
 
         .controls {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            width: 300px;
+            max-width: 100%;
+            height: 100%;
+            overflow-y: auto;
         }
 
         .control-group {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            border-radius: 8px;
-        }
-
-        .control-group h3 {
-            margin-bottom: 1rem;
-            color: #3498db;
-            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #ccc;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
         }
 
         input[type="file"] {
             display: none;
         }
 
-        .file-upload-btn {
+        .file-upload-btn,
+        .replay-btn {
             background: #3498db;
             color: white;
             padding: 0.8rem 1.5rem;
@@ -87,134 +79,143 @@
             transition: background 0.3s ease;
             text-align: center;
             font-weight: 500;
-            display: block;
-            margin-bottom: 1rem;
-        }
-
-        .file-upload-btn:hover {
-            background: #2980b9;
-        }
-
-        select,
-        input[type="number"],
-        input[type="color"] {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        select:focus,
-        input[type="number"]:focus,
-        input[type="color"]:focus {
-            background: #232323;
-            color: white;
-        }
-
-        input[type="color"] {
-            width: 50px;
-            height: 50px;
-            padding: 0;
-        }
-
-        .colorpick-eyedropper-input-trigger {
-            display: none;
-        }
-
-
-        .button {
             border: none;
             width: 100%;
         }
 
+        .file-upload-btn:hover,
+        .replay-btn:hover {
+            background: #2980b9;
+        }
+
+        select {
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            background-color: #2c3e50;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            background-color: #34495e;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
         #svg-container {
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 12px;
+            padding: 2rem;
             overflow: hidden;
         }
 
         svg {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        svg path {
+            stroke: #fff;
+            stroke-width: 10px;
+            fill: none;
         }
 
         .status-message {
+            text-align: center;
             color: #666;
             font-style: italic;
         }
 
         @media (max-width: 768px) {
-            .container {
+            body {
                 flex-direction: column;
+                gap: 1rem;
             }
 
-            .left-panel {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                padding: 1rem;
+            }
+
+            .controls {
                 width: 100%;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1.5rem;
+                max-width: 100%;
+                height: auto;
+            }
+
+            #svg-container {
+                width: 100%;
+                height: auto;
+                min-height: 200px;
+                padding: 1rem;
+            }
+
+            .file-upload-btn,
+            .replay-btn {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
-    <title>animsvg - v2</title>
 </head>
 
+
 <body>
+
     <a href="https://github.com/mdsayeb7/animsvg" target="_blank" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#3498DB; color:#ffffff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 
 
     <div class="container">
-        <div class="left-panel">
-            <div class="controls">
-                <div class="control-group">
-                    <h3>Upload SVG</h3>
-                    <input type="file" id="svg-upload" accept=".svg">
-                    <label for="svg-upload" class="file-upload-btn">Choose SVG File</label>
-                </div>
-
-                <div class="control-group">
-                    <h3>Animation Settings</h3>
-                    <label for="transition-time">Animation Duration</label>
-                    <select id="transition-time">
-                        <option value="1">1 second</option>
-                        <option value="3">3 seconds</option>
-                        <option value="5" selected>5 seconds</option>
-                        <option value="7">7 seconds</option>
-                        <option value="10">10 seconds</option>
-                    </select>
-
-                    <label for="stroke-width">Stroke Width</label>
-                    <select id="stroke-width">
-                        <option value="5">5px</option>
-                        <option value="10" selected>10px</option>
-                        <option value="15">15px</option>
-                        <option value="20">20px</option>
-                        <option value="25">25px</option>
-                    </select>
-
-                    <label for="stroke-color">Stroke Color</label>
-                    <input type="color" id="stroke-color" value="#3498db">
-
-                    <button class="file-upload-btn button" onclick="replayAnimation()">Replay Animation</button>
-                </div>
-                <footer style="text-align: center; padding: 10px; ">
-                    <p>Made with ❤️ by Sayfullah</p>
-                </footer>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="svg-upload">Upload SVG File</label>
+                <input type="file" id="svg-upload" accept=".svg">
+                <label for="svg-upload" class="file-upload-btn">Choose File</label>
             </div>
+
+            <div class="control-group">
+                <label for="transition-time">Animation Duration</label>
+                <select id="transition-time">
+                    <option value="1">1 second</option>
+                    <option value="2">2 seconds</option>
+                    <option value="3">3 seconds</option>
+                    <option value="5" selected>5 seconds</option>
+                    <option value="7">7 seconds</option>
+                    <option value="10">10 seconds</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="stroke-width">Stroke Width</label>
+                <select id="stroke-width">
+                    <option value="5">5px</option>
+                    <option value="10" selected>10px</option>
+                    <option value="15">15px</option>
+                    <option value="20">20px</option>
+                    <option value="25">25px</option>
+                </select>
+            </div>
+
+            <button class="replay-btn">Replay Animation</button>
+            <footer style="text-align: center; padding: 10px; ">
+                <p>Made with ❤️ by Sayfullah</p>
+            </footer>
         </div>
 
-        <div class="right-panel">
-            <div id="svg-container">
-                <div class="status-message">Upload an SVG file to preview animation</div>
-            </div>
+        <div id="svg-container">
+            <div class="status-message">Upload an SVG file to begin</div>
         </div>
     </div>
 
@@ -222,24 +223,17 @@
         const svgUpload = document.getElementById("svg-upload");
         const transitionTimeSelect = document.getElementById("transition-time");
         const strokeWidthSelect = document.getElementById("stroke-width");
-        const strokeColorInput = document.getElementById("stroke-color");
+        const replayButton = document.querySelector(".replay-btn");
         const svgContainer = document.getElementById("svg-container");
-
         let currentSvgContent = null;
 
         function updateFileName() {
             const fileUploadBtn = document.querySelector('.file-upload-btn');
-            const fileName = svgUpload.files[0]?.name || 'Choose SVG File';
+            const fileName = svgUpload.files[0]?.name || 'Choose File';
             fileUploadBtn.textContent = fileName;
         }
 
-        // Event Listeners for Auto-Update on Change
-        svgUpload.addEventListener("change", handleFileUpload);
-        transitionTimeSelect.addEventListener("change", updateAnimation);
-        strokeWidthSelect.addEventListener("change", updateAnimation);
-        strokeColorInput.addEventListener("change", updateAnimation);
-
-        function handleFileUpload(e) {
+        svgUpload.addEventListener("change", function (e) {
             const file = e.target.files[0];
             updateFileName();
 
@@ -247,20 +241,18 @@
                 const reader = new FileReader();
                 reader.onload = function () {
                     currentSvgContent = reader.result;
-                    updateAnimation();
+                    animateSVG();
                 };
                 reader.readAsText(file);
             } else {
                 alert("Please upload a valid SVG file.");
             }
-        }
+        });
 
-        function updateAnimation() {
+        function animateSVG() {
             if (!currentSvgContent) return;
-
             const duration = parseFloat(transitionTimeSelect.value);
-            const strokeWidth = strokeWidthSelect.value;
-            const strokeColor = strokeColorInput.value;
+            const strokeWidth = parseFloat(strokeWidthSelect.value);
 
             svgContainer.innerHTML = currentSvgContent;
             const svg = svgContainer.querySelector('svg');
@@ -274,21 +266,20 @@
             const paths = svg.querySelectorAll('path');
             paths.forEach(path => {
                 const length = path.getTotalLength();
-                path.style.stroke = strokeColor;
-                path.style.strokeWidth = strokeWidth + "px";
                 path.style.strokeDasharray = length;
                 path.style.strokeDashoffset = length;
+                path.style.strokeWidth = strokeWidth + 'px';
+
                 path.getBoundingClientRect();
+
                 path.style.transition = `stroke-dashoffset ${duration}s ease-in-out`;
                 path.style.strokeDashoffset = '0';
             });
         }
 
-        function replayAnimation() {
-            if (currentSvgContent) {
-                updateAnimation();
-            }
-        }
+        transitionTimeSelect.addEventListener("change", animateSVG);
+        strokeWidthSelect.addEventListener("change", animateSVG);
+        replayButton.addEventListener("click", animateSVG);
 
         updateFileName();
     </script>
