@@ -1,6 +1,6 @@
-# SVG Path Animator
+# animsvg
 
-**SVG Path Animator** is a tool that enables smooth, customizable path drawing animations for SVG files. Users can upload their SVG files and control the transition times for path animations, allowing for dynamic and engaging visual effects.
+**animsvg** is a tool that enables smooth, customizable path drawing animations for SVG files. Users can upload their SVG files and control the transition times for path animations, allowing for dynamic and engaging visual effects.
 
 ## Usage
 
