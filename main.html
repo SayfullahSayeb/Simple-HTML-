@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        svg path {
+            stroke: white;
+            stroke-width: 10px;
+            fill: none;
+        }
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- add svg code here -->
+
+    <script>
+        const allPaths = document.querySelectorAll("path");
+        allPaths.forEach((path) => {
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = length; path.style.strokeDashoffset = length;
+            path.getBoundingClientRect();
+            path.style.transition = "stroke-dashoffset 5s ease-in-out";
+            path.style.strokeDashoffset = "0";
+        });
+    </script>
+</body>
+
+</html>

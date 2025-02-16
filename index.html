@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
+
+        svg {
+            max-width: 90%;
+            max-height: 90%;
+            margin-top: 20px;
+        }
+
+        input[type="file"], select {
+            margin: 10px;
+        }
+
+        .controls {
+            text-align: center;
+        }
+
+        svg path {
+            stroke: white;
+            stroke-width: 10px;
+            fill: none;
+        }
+    </style>
+    <title>SVG Path Animation</title>
+</head>
+
+<body>
+
+    <div class="controls">
+        <label for="svg-upload">Upload SVG:</label>
+        <input type="file" id="svg-upload" accept=".svg">
+
+        <label for="transition-time">Select Transition Time:</label>
+        <select id="transition-time">
+            <option value="3">3 seconds</option>
+            <option value="5" selected>5 seconds</option>
+            <option value="7">7 seconds</option>
+            <option value="10">10 seconds</option>
+        </select>
+    </div>
+
+    <div id="svg-container"></div>
+
+    <script>
+        const svgUpload = document.getElementById("svg-upload");
+        const transitionTimeSelect = document.getElementById("transition-time");
+        const svgContainer = document.getElementById("svg-container");
+
+        let svgElement = null;
+
+        // Handle SVG file upload
+        svgUpload.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file && file.type === "image/svg+xml") {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    svgContainer.innerHTML = reader.result;  // Load SVG to the container
+                    svgElement = svgContainer.querySelector("svg");
+                    // Apply animation immediately after SVG is loaded
+                    applyAnimation(parseFloat(transitionTimeSelect.value));
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a valid SVG file.");
+            }
+        });
+
+        // Apply animation to SVG paths
+        function applyAnimation(transitionTime) {
+            if (!svgElement) return;
+
+            // Remove and reinsert the SVG to reset it
+            svgContainer.innerHTML = '';  // Clear current SVG
+            svgContainer.appendChild(svgElement);  // Re-insert SVG
+
+            // Reapply animation to the paths of the new SVG
+            const allPaths = svgElement.querySelectorAll("path");
+            allPaths.forEach((path) => {
+                // Reset stroke properties before applying the new animation
+                const length = path.getTotalLength();
+                path.style.strokeDasharray = length;
+                path.style.strokeDashoffset = length;
+
+                // Force reflow (repaint) to reset the animation
+                path.getBoundingClientRect(); // Trigger reflow
+
+                // Apply the new transition time
+                path.style.transition = `stroke-dashoffset ${transitionTime}s ease-in-out`;
+
+                // Restart the animation by setting strokeDashoffset to 0 after a small delay
+                setTimeout(() => {
+                    path.style.strokeDashoffset = "0";
+                }, 10); // Small timeout to ensure transition is triggered
+            });
+        }
+
+        // Apply animation instantly when the transition time is changed
+        transitionTimeSelect.addEventListener("change", function () {
+            const transitionTime = parseFloat(transitionTimeSelect.value);
+            // Only apply animation if SVG is loaded
+            if (svgElement) {
+                // Reapply animation with the new transition time
+                applyAnimation(transitionTime);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
