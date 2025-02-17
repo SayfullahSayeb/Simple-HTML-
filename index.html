@@ -133,7 +133,6 @@
         #svg-container {
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
             display: flex;
             justify-content: center;
@@ -199,9 +198,9 @@
 
                     <label for="bg-color">Choose Background Color</label>
                     <select id="bg-color">
-                        <option value="rgba(255, 255, 255, 0.02)" selected>Default</option>
+                        <option value="#000000"selected>Default</option>
+                        <option value="rgba(255, 255, 255, 0.02)">Transparent White</option>
                         <option value="#28282B">Matte Black</option>
-                        <option value="#000000">Black</option>
                         <option value="#36454F">Charcoal</option>
                         <option value="#301934">Dark Purple</option>
                     </select>
@@ -212,7 +211,7 @@
                     <button class="file-upload-btn button" onclick="replayAnimation()">Replay Animation</button>
                 </div>
 
-                <footer style="text-align: center; padding: 10px; ">
+                <footer style="text-align: center; padding: 10px;">
                     <p>Made with ❤️ by Sayfullah</p>
                 </footer>
             </div>
@@ -234,6 +233,11 @@
         const bgColorSelect = document.getElementById("bg-color");
 
         let currentSvgContent = null;
+
+        // Update background color based on the "selected" option
+        window.onload = function() {
+            updateBackgroundColor(); // Apply background color based on "selected"
+        }
 
         function updateFileName() {
             const fileUploadBtn = document.querySelector('.file-upload-btn');
@@ -295,7 +299,7 @@
 
         function updateBackgroundColor() {
             const selectedColor = bgColorSelect.value;
-            svgContainer.style.background = selectedColor;  // This will work for rgba() as well.
+            svgContainer.style.background = selectedColor;  // This will apply the selected color as background
         }
 
         function replayAnimation() {
